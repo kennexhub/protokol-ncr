@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCR GDC-NC-2026 — No Conformidades | Protokol</title>
+<style>
+:root{--orange:#e67e22;--orange-d:#cf6d17;--green:#1e7e34;--red:#b00020;--grey:#555;--line:#d9d9d9;--bg:#f4f4f4}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:#222;line-height:1.45}
+.wrap{max-width:800px;margin:0 auto;padding:12px 12px 80px}
+button,input,select,textarea{font:inherit}
+button{min-height:44px;min-width:44px;padding:10px 14px;border-radius:8px;border:1px solid #999;background:#fff;cursor:pointer}
+button.primary{background:var(--orange);border-color:var(--orange-d);color:#fff;font-weight:700}
+button.primary:disabled{background:#ccc;border-color:#ccc;cursor:not-allowed}
+button.danger{background:#fff;color:var(--red);border-color:var(--red)}
+label{display:block;font-weight:700;font-size:13px;margin:14px 0 4px;text-transform:uppercase;letter-spacing:.02em}
+input[type=text],input[type=date],select,textarea{width:100%;min-height:44px;padding:10px;border:1px solid #999;border-radius:8px;background:#fff}
+textarea{min-height:120px;resize:vertical}
+.field-error{border-color:var(--red)!important;background:#fff5f5}
+.err{color:var(--red);font-size:13px;font-weight:600;display:none;margin-top:4px}
+.err.show{display:block}
+.topbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:12px}
+.pill{display:inline-block;padding:8px 12px;border-radius:999px;font-weight:700;font-size:14px;background:#fff3cd;border:1px solid #d9a400}
+.pill.ok{background:#d4edda;border-color:var(--green);color:var(--green)}
+.pill.off{background:#f8d7da;border-color:var(--red);color:var(--red)}
+.sync{font-size:13px;font-weight:700}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+h1{font-size:20px;margin:4px 0}
+h2{font-size:17px;margin:0 0 6px;border-bottom:2px solid #222;padding-bottom:6px}
+h3{font-size:15px;margin:14px 0 4px}
+.muted{color:var(--grey);font-size:13px}
+.header-box{text-align:center}
+.header-box .code{font-size:13px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media(max-width:520px){.grid2{grid-template-columns:1fr}}
+.item{border:1px solid var(--line);border-radius:8px;padding:10px;margin:10px 0}
+.impact{display:flex;gap:8px;flex-wrap:wrap}
+.impact button{flex:1;min-height:48px;font-weight:700}
+.impact button.sel{background:var(--orange);color:#fff;border-color:var(--orange-d)}
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.photos{grid-template-columns:1fr}}
+.photo{border:1px solid var(--line);border-radius:8px;padding:8px}
+.photo img{width:100%;height:auto;display:block;border-radius:6px}
+.sig{border:1px solid var(--line);border-radius:8px;padding:10px;margin:10px 0}
+.sig canvas{width:100%;height:130px;border:2px dashed #999;border-radius:8px;background:#fff;touch-action:none;display:block}
+.sig-status{font-weight:700}
+.sig-status.signed{color:var(--green)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.toolbar button{flex:1 1 140px}
+.list-item{border:1px solid var(--line);border-radius:8px;padding:12px;margin:8px 0;background:#fff;cursor:pointer}
+.list-item:hover{border-color:var(--orange)}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:700;background:#eee;margin-right:6px}
+.badge.grave{background:#f8d7da}.badge.moderado{background:#fff3cd}.badge.leve{background:#d4edda}
+#missingBox{display:none;background:#fff5f5;border:1px solid var(--red);border-radius:8px;padding:10px;margin:10px 0}
+#missingBox.show{display:block}
+#docView{display:none}
+.doc{background:#fff;border:1px solid #999;padding:18px;margin:10px 0}
+.doc h1{font-size:18px}.doc h2{font-size:15px}
+.doc table{width:100%;border-collapse:collapse;font-size:13px}
+.doc th,.doc td{border:1px solid #333;padding:6px;text-align:left;vertical-align:top}
+.doc .photos-print{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.doc .photos-print figure{margin:0;text-align:center;max-width:45%}
+.doc .photos-print img{max-width:100%;max-height:260px}
+.sig-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+#pinGate{position:fixed;inset:0;background:#f4f4f4;z-index:9999;padding:24px}
+#pinGate .pin-box{max-width:420px;margin:60px auto;background:#fff;border:1px solid #d9d9d9;border-radius:10px;padding:20px}
+@media(max-width:520px){.sig-grid{grid-template-columns:1fr 1fr}}
+.sig-cell{border:1px solid #333;min-height:110px;padding:8px;text-align:center;font-size:12px}
+.sig-cell img{max-width:100%;max-height:60px}
+@media print{
+  @page{size:A4;margin:0.5cm}
+  @page{@bottom-center{content:"Página " counter(page) " de " counter(pages);font-size:11px}}
+  body{background:#fff}
+  .wrap{max-width:none;padding:0}
+  .no-print{display:none!important}
+  #docView{display:block!important}
+  #listView,#formView{display:none!important}
+  .doc{border:none;padding:0;margin:0}
+}
+</style>
+</head>
+<body>
+<!-- PIN gate: acceso solo para usuarios autorizados (David + 1). El PIN vive en Firestore settings/access; si no existe, vale el PIN inicial 2026. -->
+<div id="pinGate"><div class="pin-box">
+  <h1 style="font-size:18px;margin:0 0 6px">Protokol — NCR</h1>
+  <p class="muted">Acceso restringido a usuarios autorizados. Ingrese el PIN para continuar.</p>
+  <label for="pinInput">PIN</label>
+  <input type="password" id="pinInput" inputmode="numeric" autocomplete="off" placeholder="••••">
+  <div class="err" id="pinErr">PIN incorrecto.</div>
+  <div class="toolbar"><button type="button" id="btnPin" class="primary">Entrar</button></div>
+  <p class="muted" id="pinHint">Si es la primera vez en este dispositivo, necesita conexión para verificar el PIN una vez; después queda recordado.</p>
+</div></div>
+<div class="wrap">
+<div class="topbar no-print">
+  <div style="display:flex;align-items:center;gap:10px">
+    <img id="logoTop" alt="Gobierno Regional Ayacucho" style="height:46px;width:auto">
+    <div>
+      <strong>Protokol — NCR</strong><br>
+      <span class="sync" id="syncStatus">● Conectando…</span>
+      <span class="muted" id="authStatus"></span>
+    </div>
+  </div>
+  <div>
+    <button id="langEs" type="button">ES</button>
+    <button id="langEn" type="button">EN</button>
+    <button id="btnChangePin" type="button" title="Cambiar el PIN de acceso">Cambiar PIN</button>
+  </div>
+</div>
+
+<div class="topbar no-print">
+  <span class="pill" id="statusPill" data-i18n="pending">Pendiente. Falta 6 cosas.</span>
+  <span id="ncrNumberLabel" class="muted"></span>
+</div>
+<div id="missingBox" class="no-print"><strong data-i18n="missingTitle">Faltan:</strong><ul id="missingList"></ul></div>
+<div id="draftWarning" class="card no-print" style="display:none;background:#fff3cd"><strong data-i18n="draftWarn">Borrador sin guardar.</strong> <span data-i18n="draftWarn2">Hay cambios locales no guardados en Firestore. Guarde antes de cerrar.</span></div>
+
+<div class="toolbar no-print">
+  <button type="button" id="btnList" data-i18n="viewList">Ver lista</button>
+  <button type="button" id="btnNew" class="primary" data-i18n="newNcr">Nueva NCR</button>
+  <button type="button" id="btnExample" data-i18n="loadExample">Cargar ejemplo real</button>
+  <button type="button" id="btnClear" data-i18n="clearAll">Limpiar todo</button>
+</div>
+
+<!-- LIST VIEW -->
+<div id="listView" class="no-print">
+  <div class="card">
+    <h2 data-i18n="listTitle">NCR registradas</h2>
+    <p class="muted" data-i18n="listHint">Solo se muestran NCR reales guardadas en Firestore. El ejemplo no se guarda solo.</p>
+    <label for="searchInput" data-i18n="search">Buscar por número, ubicación o elemento</label>
+    <input type="text" id="searchInput" placeholder="GDC-NC-2026-001 / Pucará / UBS">
+    <div class="grid2">
+      <div><label for="filterEstado" data-i18n="filterEstado">Filtrar por estado</label>
+        <select id="filterEstado"><option value="">Todos</option><option>Abierta</option><option>En corrección</option><option>Cerrada</option></select></div>
+      <div><label for="filterImpacto" data-i18n="filterImpacto">Filtrar por impacto</label>
+        <select id="filterImpacto"><option value="">Todos</option><option>LEVE</option><option>MODERADO</option><option>GRAVE</option></select></div>
+    </div>
+    <div class="toolbar"><button type="button" id="btnRefresh" data-i18n="refresh">Actualizar lista</button></div>
+  </div>
+  <div id="listCount" class="muted">0 NCR</div>
+  <div id="listItems"></div>
+  <div id="listEmpty" class="card"><p><strong>Aún no hay NCR registradas.</strong></p><p class="muted">0 NCR en Firestore. Cree la primera con “Nueva NCR”.</p></div>
+</div>
+
+<!-- FORM VIEW -->
+<div id="formView" class="no-print" style="display:none">
+<div class="card header-box">
+  <div><strong>Gobierno Regional de Ayacucho</strong></div>
+  <div>Gestión de Calidad</div>
+  <div class="muted" data-i18n="formLabel">FORMATO</div>
+  <h1 data-i18n="formTitle">NO CONFORMIDADES</h1>
+  <div class="code">CÓDIGO — GDC-NC-2026 &nbsp;|&nbsp; VERSIÓN — 0 &nbsp;|&nbsp; PÁGINA — 1 de 1 &nbsp;|&nbsp; FECHA DE VIGENCIA — 09-03-2020</div>
+  <div class="code" id="docNumberLine"></div>
+</div>
+
+<div class="card">
+<h2 data-i18n="s1">1 DATOS GENERALES</h2>
+<p class="muted" data-i18n="s1help">Los datos de la obra, tal como están en el formato. Todos los campos de esta sección son obligatorios: sin ellos el documento no se puede registrar.</p>
+<label for="proyecto" data-i18n="proyecto">PROYECTO</label>
+<input type="text" id="proyecto" value="MEJORAMIENTO Y AMPLIACIÓN DEL SERVICIO DE TRANSITABILIDAD ENTRE EL TRAMO AY-728 (PENAL DE YANAMILLA) HASTA EL TRAMO AY-729 (PTAR) LONGITUD 2.38 KM, EN EL DISTRITO DE ANDRES AVELINO CACERES - PROVINCIA DE HUAMANGA - DEPARTAMENTO DE AYACUCHO">
+<div class="err" id="err-proyecto">Campo obligatorio.</div>
+<label for="cliente" data-i18n="cliente">CLIENTE</label><input type="text" id="cliente" value="GOBIERNO REGIONAL DE AYACUCHO"><div class="err" id="err-cliente">Campo obligatorio.</div>
+<label for="constructor" data-i18n="constructor">CONSTRUCTOR</label><input type="text" id="constructor" value="GOBIERNO REGIONAL DE AYACUCHO - SEDE CENTRAL"><div class="err" id="err-constructor">Campo obligatorio.</div>
+<label for="supervision" data-i18n="supervision">SUPERVISIÓN</label><input type="text" id="supervision"><div class="err" id="err-supervision">Campo obligatorio.</div>
+</div>
+
+<div class="card">
+<h2 data-i18n="s2">2 IDENTIFICACIÓN</h2>
+<label for="ubicacion" data-i18n="ubicacion">UBICACIÓN</label><input type="text" id="ubicacion"><div class="err" id="err-ubicacion">Campo obligatorio.</div>
+<div class="grid2">
+<div><label for="progresiva" data-i18n="progresiva">PROGRESIVA</label><input type="text" id="progresiva"></div>
+<div><label for="fecha" data-i18n="fecha">FECHA</label><input type="date" id="fecha"><div class="err" id="err-fecha">Campo obligatorio.</div><div class="muted" id="fechaFormatted"></div></div>
+</div>
+<label for="ncrNumberInput" data-i18n="ncrNumber">N.º NCR (CORRELATIVO)</label>
+<input type="text" id="ncrNumberInput" placeholder="GDC-NC-2026-001">
+<p class="muted" data-i18n="ncrNumberHelp">Lo asigna David: el sistema sugiere el siguiente número, pero puede escribir otro. Debe ser único.</p>
+<div class="err" id="err-ncrNumber">Ese número ya existe en otra NCR.</div>
+<label for="planoRef" data-i18n="planoRef">PLANO DE REF.</label><input type="text" id="planoRef">
+<label for="estado" data-i18n="estado">ESTADO</label>
+<select id="estado"><option>Abierta</option><option>En corrección</option><option>Cerrada</option></select>
+<p class="muted" data-i18n="estadoHelp">Flujo de estado: Abierta (se registra la no conformidad) → En corrección (se está ejecutando la acción correctiva) → Cerrada (David verifica la corrección y cierra). Solo David cierra el proceso. Cada cambio queda en la auditoría.</p>
+
+<h3 data-i18n="itemsTitle">TABLA DE ÍTEMS</h3>
+<p class="muted" data-i18n="itemsHelp">Un ítem por cada no conformidad detectada. Empieza con 1 fila; agrega más si hace falta.</p>
+<div id="itemsContainer"></div>
+<div class="err" id="err-items">Falta al menos 1 ítem con Etapa de obra y Responsable.</div>
+<button type="button" id="btnAddItem">+ Agregar ítem</button>
+</div>
+
+<div class="card">
+<h2 data-i18n="s3">3 DESCRIPCIÓN DE LA NCR</h2>
+<label for="descripcion" data-i18n="descripcion">DESCRIPCIÓN DEL DEFECTO Y ACCIONES</label>
+<textarea id="descripcion" placeholder="Describe el defecto encontrado y las acciones a tomar…"></textarea><div class="err" id="err-descripcion">Campo obligatorio.</div>
+<label data-i18n="photos">FOTOS DE EVIDENCIA (AL MENOS 1, OBLIGATORIA)</label>
+<p class="muted" data-i18n="photosHelp">Máximo 8 fotos. Cada foto tiene su pie/caption. Se comprimen en el dispositivo (máx. 1200 px, JPEG 0.75) y se rechazan si siguen pesando más de 700 KB.</p>
+<div id="photosContainer" class="photos"></div>
+<div id="photosEmpty" class="muted">Todavía no hay fotos del defecto. Puedes agregar varias.</div>
+<div class="err" id="err-photos">Falta al menos 1 foto de evidencia.</div>
+<div class="toolbar"><button type="button" id="btnAddPhoto">Tomar / agregar foto</button></div>
+<input type="file" id="photoInput" accept="image/*" style="display:none">
+<label data-i18n="impacto">IMPACTO (MARCA SOLO UNO)</label>
+<div class="impact" id="impactGroup">
+<button type="button" data-impact="LEVE">LEVE</button>
+<button type="button" data-impact="MODERADO">MODERADO</button>
+<button type="button" data-impact="GRAVE">GRAVE</button>
+</div>
+<div class="err" id="err-impacto">Seleccione un impacto.</div>
+</div>
+
+<div class="card">
+<h2 data-i18n="s5">4 FIRMAS</h2>
+<p class="muted" data-i18n="s5help">Las firmas se harán físicamente sobre el documento impreso. Esta sección es solo opcional: si desean, pueden firmar digitalmente aquí trazando con el dedo en el recuadro y escribiendo el nombre de quien firma. El documento se genera siempre, con o sin firmas digitales, sin ninguna restricción por falta de firma. La fecha y hora de cada firma digital se registran automáticamente.</p>
+<div id="signaturesContainer"></div>
+</div>
+
+<div class="toolbar">
+<button type="button" id="btnSave" class="primary" data-i18n="save">Guardar</button>
+<button type="button" id="btnGenerate" class="primary" data-i18n="generate">Generar documento</button>
+</div>
+<div id="saveMsg" class="muted"></div>
+<div id="auditBox" class="card" style="display:none"><h3 data-i18n="auditTitle">Auditoría</h3><div id="auditList" class="muted"></div></div>
+</div>
+
+<!-- DOCUMENT VIEW -->
+<div id="docView">
+  <div class="toolbar no-print"><button type="button" id="btnPrint" class="primary">Imprimir / Descargar PDF</button><button type="button" id="btnDownload">Descargar documento</button><button type="button" id="btnBackForm">← Volver al formato</button></div>
+  <p class="muted no-print" id="docNote">Para imprimir o guardar como PDF: usa Ctrl+P (o el botón Imprimir de tu navegador) y elige “Guardar como PDF”. Sale solo el documento, sin el formulario. En el caso normal cabe en una sola hoja A4; si es más largo, pasa limpio a una segunda hoja, con las secciones enteras y el número de página al pie de cada hoja.</p>
+  <div id="docPreview" class="doc"></div>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, enableIndexedDbPersistence, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, runTransaction, serverTimestamp, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = { apiKey: "AIzaSyCMnK46mBoFboFHYBFEVYxMSeNaZRC3hvE", authDomain: "protokol-ncr.firebaseapp.com", projectId: "protokol-ncr", storageBucket: "protokol-ncr.firebasestorage.app", messagingSenderId: "1082130707830", appId: "1:1082130707830:web:4a3beb9d0bc01ee15cf657" };
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+try { await enableIndexedDbPersistence(db); } catch(e) { console.warn("Persistence no disponible:", e.message); }
+
+let uid = null, lang = "es", online = navigator.onLine, pendingCount = 0;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const todayISO = () => { const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
+const isoToDMY = iso => { if(!iso) return "—"; const p=iso.split("-"); return p.length===3 ? p[2]+"/"+p[1]+"/"+p[0] : iso; };
+const dmyToISO = dmy => { const p=String(dmy||"").split("/"); return p.length===3 ? p[2]+"-"+p[1]+"-"+p[0] : ""; };
+const fmtTs = ts => { try { const d = ts && ts.toDate ? ts.toDate() : new Date(ts); return d.toLocaleString("es-PE"); } catch(e){ return ""; } };
+
+const I18N = {
+es:{pending:"Pendiente.",registered:"REGISTRADA — Todo completo",missingTitle:"Faltan:",draftWarn:"Borrador sin guardar.",draftWarn2:"Hay cambios locales no guardados en Firestore. Guarde antes de cerrar.",viewList:"Ver lista",newNcr:"Nueva NCR",loadExample:"Cargar ejemplo real",clearAll:"Limpiar todo",listTitle:"NCR registradas",listHint:"Solo se muestran NCR reales guardadas en Firestore. El ejemplo no se guarda solo.",search:"Buscar por número, ubicación o elemento",filterEstado:"Filtrar por estado",filterImpacto:"Filtrar por impacto",refresh:"Actualizar lista",formTitle:"NO CONFORMIDADES",formLabel:"FORMATO",s1:"1 DATOS GENERALES",s1help:"Los datos de la obra, tal como están en el formato. Todos los campos de esta sección son obligatorios: sin ellos el documento no se puede registrar.",proyecto:"PROYECTO",cliente:"CLIENTE",constructor:"CONSTRUCTOR",supervision:"SUPERVISIÓN",s2:"2 IDENTIFICACIÓN",ubicacion:"UBICACIÓN",progresiva:"PROGRESIVA",fecha:"FECHA",planoRef:"PLANO DE REF.",estado:"ESTADO",estadoHelp:"Flujo de estado: Abierta (se registra la no conformidad) → En corrección (se está ejecutando la acción correctiva) → Cerrada (David verifica la corrección y cierra). Solo David cierra el proceso. Cada cambio queda en la auditoría.",itemsTitle:"TABLA DE ÍTEMS",itemsHelp:"Un ítem por cada no conformidad detectada. Empieza con 1 fila; agrega más si hace falta.",s3:"3 DESCRIPCIÓN DE LA NCR",descripcion:"DESCRIPCIÓN DEL DEFECTO Y ACCIONES",photos:"FOTOS DE EVIDENCIA (AL MENOS 1, OBLIGATORIA)",photosHelp:"Máximo 8 fotos. Cada foto tiene su pie/caption. Se comprimen en el dispositivo (máx. 1200 px, JPEG 0.75) y se rechazan si siguen pesando más de 700 KB.",impacto:"IMPACTO (MARCA SOLO UNO)",s5:"4 FIRMAS",s5help:"Las firmas se harán físicamente sobre el documento impreso. Esta sección es solo opcional: si desean, pueden firmar digitalmente aquí trazando con el dedo en el recuadro y escribiendo el nombre de quien firma. El documento se genera siempre, con o sin firmas digitales, sin ninguna restricción por falta de firma. La fecha y hora de cada firma digital se registran automáticamente.",save:"Guardar",generate:"Generar documento",auditTitle:"Auditoría",ncrNumber:"N.º NCR (CORRELATIVO)",ncrNumberHelp:"Lo asigna David: el sistema sugiere el siguiente número, pero puede escribir otro. Debe ser único."},
+en:{pending:"Pending.",registered:"REGISTERED — All complete",missingTitle:"Missing:",draftWarn:"Unsaved draft.",draftWarn2:"There are local changes not saved to Firestore. Save before closing.",viewList:"View list",newNcr:"New NCR",loadExample:"Load real example",clearAll:"Clear all",listTitle:"Registered NCRs",listHint:"Only real NCRs saved in Firestore are shown. The example is not saved on its own.",search:"Search by number, location or element",filterEstado:"Filter by status",filterImpacto:"Filter by impact",refresh:"Refresh list",formTitle:"NON-CONFORMITIES",formLabel:"FORM",s1:"1 GENERAL DATA",s1help:"The project data, exactly as in the format. Every field in this section is required: without them the document cannot be registered.",proyecto:"PROJECT",cliente:"CLIENT",constructor:"BUILDER",supervision:"SUPERVISION",s2:"2 IDENTIFICATION",ubicacion:"LOCATION",progresiva:"CHAINAGE",fecha:"DATE",planoRef:"REF. DRAWING",estado:"STATUS",estadoHelp:"Status flow: Open (the non-conformity is recorded) → In correction (the corrective action is being carried out) → Closed (David verifies the fix and closes it). Only David closes the process. Every change is recorded in the audit trail.",itemsTitle:"ITEMS TABLE",itemsHelp:"One item for each detected non-conformity. Start with 1 row; add more if needed.",s3:"3 NCR DESCRIPTION",descripcion:"DEFECT DESCRIPTION AND ACTIONS",photos:"EVIDENCE PHOTOS (AT LEAST 1, REQUIRED)",photosHelp:"Maximum 8 photos. Each photo has a caption. Compressed on device (max 1200 px, JPEG 0.75) and rejected if still over 700 KB.",impacto:"IMPACT (SELECT ONLY ONE)",s5:"4 SIGNATURES",s5help:"Signatures will be made physically on the printed document. This section is optional only: if they wish, they can sign digitally here by tracing with a finger in the box and writing the signer's name. The document is always generated, with or without digital signatures, with no restriction for missing a signature. The date and time of each digital signature are recorded automatically.",save:"Save",generate:"Generate document",auditTitle:"Audit trail",ncrNumber:"NCR No. (SEQUENTIAL)",ncrNumberHelp:"Assigned by David: the system suggests the next number, but you can type another one. It must be unique."}
+};
+function applyLang(){
+  document.querySelectorAll("[data-i18n]").forEach(el=>{ const k=el.getAttribute("data-i18n"); if(I18N[lang][k]) el.textContent=I18N[lang][k]; });
+  $("langEs").style.fontWeight = lang==="es" ? "700" : "400";
+  $("langEn").style.fontWeight = lang==="en" ? "700" : "400";
+  renderItems(); renderPhotos(); renderSignatures(); updatePill();
+}
+$("langEs").onclick=()=>{lang="es";applyLang();};
+$("langEn").onclick=()=>{lang="en";applyLang();};
+
+const SIG_ROLES=[{rol:"RESIDENTE DE OBRA",cargo:"Residente de Obra"},{rol:"SUPERVISOR DE OBRA",cargo:"Supervisor de Obra"},{rol:"FIRMA ADICIONAL (OPCIONAL)",cargo:""},{rol:"FIRMA ADICIONAL (OPCIONAL)",cargo:""},{rol:"FIRMA ADICIONAL (OPCIONAL)",cargo:""},{rol:"FIRMA ADICIONAL (OPCIONAL)",cargo:""}];
+const LOGO_AYACUCHO="data:image/jpeg;base64,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"; // Logo Gobierno Regional Ayacucho (incrustado para que el archivo sea autocontenido, también sale en el documento y en la descarga)
+let state={id:null,ncrNumber:null,seq:null,savedNumber:null,createdAt:null,items:[{etapa:"",responsable:"",ubicacion:"",elemento:"",partida:""}],photos:[],signatures:SIG_ROLES.map(r=>({rol:r.rol,nombre:"",cargo:r.cargo,signed:false,signedAt:null,dataUrl:""})),impacto:"",estadoPrev:"Abierta",dirty:false,provisional:false};
+let suggestedNumber=null; // número que el sistema sugiere (siguiente correlativo); David puede cambiarlo
+let pendingAudit=[];
+
+function collect(){
+  return {ncrNumber:$("ncrNumberInput").value.trim(),proyecto:$("proyecto").value.trim(),cliente:$("cliente").value.trim(),constructor:$("constructor").value.trim(),supervision:$("supervision").value.trim(),ubicacion:$("ubicacion").value.trim(),progresiva:$("progresiva").value.trim(),fecha:$("fecha").value,planoRef:$("planoRef").value.trim(),estado:$("estado").value,descripcion:$("descripcion").value.trim(),items:state.items,impacto:state.impacto,signatures:state.signatures};
+}
+function fill(d){
+  // El número solo se toca si el dato lo trae (abrir una NCR guardada, o el ejemplo NO debe borrar el número que David ya escribió).
+  // OJO: suggestedNumber NO se toca aquí — es solo el número que el sistema sugirió (lo pone fetchSuggestion). Si un borrador con número propio lo contaminara, el guardado confundiría ese número con la sugerencia y lo reemplazaría por el correlativo automático.
+  if("ncrNumber" in d){ $("ncrNumberInput").value=d.ncrNumber||""; state.ncrNumber=d.ncrNumber||null; state.savedNumber=d.ncrNumber||null; }
+  $("proyecto").value=d.proyecto||"";$("cliente").value=d.cliente||"";$("constructor").value=(typeof d.constructor==="string"?d.constructor:"");$("supervision").value=d.supervision||"";
+  $("ubicacion").value=d.ubicacion||"";$("progresiva").value=d.progresiva||"";$("fecha").value=d.fechaISO||dmyToISO(d.fecha)||"";$("planoRef").value=d.planoRef||"";$("estado").value=d.estado||"Abierta";
+  $("descripcion").value=d.descripcion||"";
+  state.items=(d.items&&d.items.length?d.items:[{etapa:"",responsable:"",ubicacion:"",elemento:"",partida:""}]);
+  state.impacto=d.impacto||""; state.signatures=(d.signatures&&d.signatures.length?d.signatures:SIG_ROLES.map(r=>({rol:r.rol,nombre:"",cargo:r.cargo,signed:false,signedAt:null,dataUrl:""})));
+  state.estadoPrev=d.estado||"Abierta"; updateFechaFormatted(); renderItems(); renderPhotos(); renderSignatures(); updateImpactUI(); updatePill(); autosaveDraft();
+}
+function updateFechaFormatted(){ $("fechaFormatted").textContent = $("fecha").value ? ("dd/mm/yyyy: "+isoToDMY($("fecha").value)) : ""; }
+$("fecha").addEventListener("change",()=>{updateFechaFormatted();markDirty();});
+
+function renderItems(){
+  const c=$("itemsContainer"); c.innerHTML="";
+  state.items.forEach((it,i)=>{
+    const div=document.createElement("div"); div.className="item";
+    div.innerHTML='<strong>Ítem '+(i+1)+'</strong> <button type="button" data-del-item="'+i+'" style="float:right">Quitar</button>'
+      +'<label>ETAPA DE OBRA</label><input type="text" data-item="'+i+'" data-f="etapa" value="'+esc(it.etapa)+'">'
+      +'<label>RESPONSABLE DE NO CONFORMIDAD</label><input type="text" data-item="'+i+'" data-f="responsable" value="'+esc(it.responsable)+'">'
+      +'<label>UBICACIÓN (NIVEL/PISO/DPTO/SECTOR)</label><input type="text" data-item="'+i+'" data-f="ubicacion" value="'+esc(it.ubicacion)+'">'
+      +'<label>ELEMENTO</label><input type="text" data-item="'+i+'" data-f="elemento" value="'+esc(it.elemento)+'">'
+      +'<label>PARTIDA DE TRABAJO</label><input type="text" data-item="'+i+'" data-f="partida" value="'+esc(it.partida)+'">';
+    c.appendChild(div);
+  });
+  c.querySelectorAll("[data-item]").forEach(inp=>inp.addEventListener("input",e=>{state.items[+e.target.dataset.item][e.target.dataset.f]=e.target.value;markDirty();}));
+  c.querySelectorAll("[data-del-item]").forEach(b=>b.addEventListener("click",e=>{if(state.items.length>1){state.items.splice(+e.target.dataset.delItem,1);renderItems();markDirty();}}));
+}
+$("btnAddItem").onclick=()=>{state.items.push({etapa:"",responsable:"",ubicacion:"",elemento:"",partida:""});renderItems();markDirty();};
+
+function renderPhotos(){
+  const c=$("photosContainer"); c.innerHTML=""; $("photosEmpty").style.display=state.photos.length?"none":"block";
+  state.photos.forEach((p,i)=>{
+    const div=document.createElement("div"); div.className="photo";
+    div.innerHTML='<img src="'+p.dataUrl+'" alt="Foto de evidencia '+(i+1)+'"><label>Pie / caption — Foto '+(i+1)+'</label><input type="text" data-cap="'+i+'" value="'+esc(p.caption||"")+'" placeholder="Foto '+(i+1)+'"><div class="toolbar"><button type="button" data-rep="'+i+'">Reemplazar</button><button type="button" class="danger" data-del-photo="'+i+'">Quitar</button></div>';
+    c.appendChild(div);
+  });
+  c.querySelectorAll("[data-cap]").forEach(inp=>inp.addEventListener("input",e=>{state.photos[+e.target.dataset.cap].caption=e.target.value;markDirty();}));
+  c.querySelectorAll("[data-del-photo]").forEach(b=>b.addEventListener("click",e=>{const p=state.photos.splice(+e.target.dataset.delPhoto,1)[0]; if(p) pendingAudit.push("Foto eliminada: "+(p.caption||"foto")); renderPhotos(); updatePill(); markDirty();}));
+  c.querySelectorAll("[data-rep]").forEach(b=>b.addEventListener("click",e=>{replacePhotoIndex=+e.target.dataset.rep; $("photoInput").click();}));
+}
+let replacePhotoIndex=-1;
+$("btnAddPhoto").onclick=()=>{ if(state.photos.length>=8){ alert(lang==="es"?"Máximo 8 fotos.":"Maximum 8 photos."); return; } replacePhotoIndex=-1; $("photoInput").click(); };
+$("photoInput").addEventListener("change",async e=>{
+  const f=e.target.files[0]; e.target.value=""; if(!f) return;
+  try{
+    const dataUrl=await compressImage(f);
+    const bytes=Math.round(dataUrl.length*0.75);
+    if(bytes>700*1024){ alert(lang==="es"?("La foto sigue pesando más de 700 KB después de comprimir ("+Math.round(bytes/1024)+" KB). Use una foto más pequeña."):("Photo still over 700 KB after compression ("+Math.round(bytes/1024)+" KB). Use a smaller photo.")); return; }
+    const rec={id:"p"+Date.now()+Math.random().toString(36).slice(2,7),dataUrl,caption:"Foto "+(state.photos.length+1),order:state.photos.length,createdAt:new Date().toISOString(),_new:true};
+    if(replacePhotoIndex>=0){ state.photos[replacePhotoIndex]=rec; pendingAudit.push("Foto reemplazada"); replacePhotoIndex=-1; }
+    else { state.photos.push(rec); pendingAudit.push("Foto agregada"); }
+    renderPhotos(); updatePill(); markDirty();
+  }catch(err){ alert("Error al procesar la foto: "+err.message); }
+});
+function compressImage(file){
+  return new Promise((resolve,reject)=>{
+    const img=new Image(); const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      const trySize=(maxSide,quality)=>{ const scale=Math.min(1,maxSide/Math.max(img.width,img.height)); const w=Math.round(img.width*scale),h=Math.round(img.height*scale); const cv=document.createElement("canvas"); cv.width=w; cv.height=h; cv.getContext("2d").drawImage(img,0,0,w,h); return cv.toDataURL("image/jpeg",quality); };
+      let out=trySize(1200,0.75);
+      if(out.length*0.75>700*1024) out=trySize(900,0.6);
+      URL.revokeObjectURL(url); resolve(out);
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("No se pudo leer la imagen."));};
+    img.src=url;
+  });
+}
+
+function renderSignatures(){
+  const c=$("signaturesContainer"); c.innerHTML="";
+  state.signatures.forEach((s,i)=>{
+    const div=document.createElement("div"); div.className="sig";
+    div.innerHTML='<strong>'+esc(s.rol)+'</strong> <span class="sig-status '+(s.signed?"signed":"")+'">'+(s.signed?"✔ FIRMADO":"SIN FIRMAR")+'</span>'
+      +(s.signed&&s.signedAt?'<div class="muted">Firmado: '+esc(s.signedAt)+'</div>':"")
+      +'<label>FIRMA CON EL DEDO — Traza tu firma aquí con el dedo</label><canvas data-canvas="'+i+'" width="600" height="240"></canvas>'
+      +'<div class="toolbar"><button type="button" data-clear-sig="'+i+'" '+(s.signed?"disabled":"")+'>Borrar firma</button><button type="button" data-sign="'+i+'">'+(s.signed?"Quitar firma":"Firmar")+'</button></div>'
+      +'<label>NOMBRE DE QUIEN FIRMA</label><input type="text" data-signame="'+i+'" value="'+esc(s.nombre||"")+'" '+(s.signed?"disabled":"")+'>'
+      +(i<2?'<label>CARGO</label><input type="text" data-sigcargo="'+i+'" value="'+esc(s.cargo||"")+'" '+(s.signed?"disabled":"")+'>':"");
+    c.appendChild(div);
+    const cv=div.querySelector("canvas"); const ctx=cv.getContext("2d"); ctx.lineWidth=4; ctx.lineCap="round"; ctx.strokeStyle="#111";
+    if(s.dataUrl){ const im=new Image(); im.onload=()=>ctx.drawImage(im,0,0,cv.width,cv.height); im.src=s.dataUrl; }
+    let drawing=false,last=null;
+    const pos=e=>{ const r=cv.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return {x:(t.clientX-r.left)*(cv.width/r.width), y:(t.clientY-r.top)*(cv.height/r.height)}; };
+    cv.addEventListener("pointerdown",e=>{if(s.signed)return; drawing=true; last=pos(e); cv.setPointerCapture(e.pointerId);});
+    cv.addEventListener("pointermove",e=>{if(!drawing||s.signed)return; const p=pos(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p;});
+    const end=()=>{drawing=false; s.dataUrl=cv.toDataURL("image/png"); markDirty();};
+    cv.addEventListener("pointerup",end); cv.addEventListener("pointercancel",()=>drawing=false);
+    div.querySelector("[data-clear-sig]").addEventListener("click",()=>{ctx.clearRect(0,0,cv.width,cv.height); s.dataUrl=""; markDirty();});
+    div.querySelector("[data-signame]").addEventListener("input",e=>{s.nombre=e.target.value;markDirty();});
+    const cargo=div.querySelector("[data-sigcargo]"); if(cargo) cargo.addEventListener("input",e=>{s.cargo=e.target.value;markDirty();});
+    div.querySelector("[data-sign]").addEventListener("click",()=>{
+      if(s.signed){ s.signed=false; s.signedAt=null; pendingAudit.push("Firma retirada: "+s.rol); }
+      else { if(!s.nombre.trim()){ alert(lang==="es"?"Escriba el nombre de quien firma antes de firmar.":"Enter the signer name before signing."); return; } s.signed=true; s.signedAt=new Date().toLocaleString("es-PE"); pendingAudit.push("Firma: "+s.rol+" — "+s.nombre); }
+      renderSignatures(); markDirty();
+    });
+  });
+}
+function updateImpactUI(){ document.querySelectorAll("#impactGroup button").forEach(b=>b.classList.toggle("sel", b.dataset.impact===state.impacto)); }
+document.querySelectorAll("#impactGroup button").forEach(b=>b.addEventListener("click",()=>{state.impacto=b.dataset.impact; updateImpactUI(); updatePill(); markDirty();}));
+
+let attempted=false;
+function validate(forGenerate){
+  const d=collect(); const missing=[];
+  const req=[["proyecto","Proyecto"],["cliente","Cliente"],["constructor","Constructor"],["supervision","Supervisión"],["ubicacion","Ubicación"],["fecha","Fecha"],["descripcion","Descripción"]];
+  req.forEach(([k,label])=>{ const bad=!d[k]; if(attempted){ $( "err-"+k)?.classList.toggle("show",bad); const inp=$(k); if(inp) inp.classList.toggle("field-error",bad); } if(bad) missing.push(label); });
+  const itemOk=d.items.some(it=>it.etapa.trim()&&it.responsable.trim());
+  if(attempted) $("err-items").classList.toggle("show",!itemOk); if(!itemOk) missing.push("Ítem 1: Etapa + Responsable");
+  // La foto es obligatoria para GUARDAR una NCR real (es la evidencia), pero no para generar el documento: el ejemplo y la vista previa deben verse sin fricción (el documento muestra "Sin foto de evidencia").
+  const photoOk=state.photos.length>=1; if(attempted && !forGenerate) $("err-photos").classList.toggle("show",!photoOk); if(!photoOk && !forGenerate) missing.push("1 foto de evidencia");
+  const impOk=!!state.impacto; if(attempted) $("err-impacto").classList.toggle("show",!impOk); if(!impOk) missing.push("Impacto");
+  return missing;
+}
+function updatePill(){
+  const m=validate(); const box=$("missingBox");
+  if(m.length){ $("statusPill").textContent=(lang==="es"?"Pendiente. Falta ":"Pending. Missing ")+m.length+" "+(lang==="es"?"cosas.":"items."); $("statusPill").classList.remove("ok"); $("missingList").innerHTML=m.map(x=>"<li>"+esc(x)+"</li>").join(""); box.classList.add("show"); }
+  else { $("statusPill").textContent=I18N[lang].registered; $("statusPill").classList.add("ok"); box.classList.remove("show"); }
+  $("ncrNumberLabel").textContent = state.ncrNumber ? ("NCR: "+state.ncrNumber) : (state.provisional ? "NCR: BORRADOR LOCAL — número provisional, no final" : "NCR: sin número — se asigna al guardar");
+  $("docNumberLine").textContent = state.ncrNumber ? ("N.º NCR: "+state.ncrNumber) : "";
+}
+function markDirty(){ state.dirty=true; $("draftWarning").style.display="block"; autosaveDraft(); }
+let draftTimer=null;
+function autosaveDraft(){ clearTimeout(draftTimer); draftTimer=setTimeout(()=>{ try{ const d=collect(); d.id=state.id; d.ncrNumber=state.ncrNumber; d.seq=state.seq; d.photos=state.photos.map(p=>({id:p.id,dataUrl:p.dataUrl,caption:p.caption,order:p.order})); d.fechaDMY=isoToDMY(d.fecha); localStorage.setItem("ncr-draft-v1",JSON.stringify(d)); }catch(e){} },300); }
+["proyecto","cliente","constructor","supervision","ubicacion","progresiva","planoRef","descripcion"].forEach(id=>$(id).addEventListener("input",markDirty));
+$("estado").addEventListener("change",()=>{ updatePill(); markDirty(); });
+
+async function addAudit(ncrId,action){
+  if(!ncrId||!uid) return;
+  try{ await addDoc(collection(db,"ncrs",ncrId,"audit"),{action,uid,createdAt:serverTimestamp()}); }catch(e){ console.warn("Audit no guardada:",e.message); }
+}
+async function assignNumber(){
+  const ref=doc(db,"counters","ncrSeq");
+  const next=await runTransaction(db,async tx=>{ const snap=await tx.get(ref); const cur=snap.exists()?(snap.data().next||1):1; tx.set(ref,{next:cur+1},{merge:true}); return cur; });
+  return {seq:next,number:"GDC-NC-2026-"+String(next).padStart(3,"0")};
+}
+// ¿Ya existe una NCR con este número? (excluye el doc actual al renombrar)
+async function checkNumberUnique(num,excludeId){
+  const snap=await getDocs(query(collection(db,"ncrs"),where("ncrNumber","==",num)));
+  return !snap.docs.some(x=>x.id!==excludeId);
+}
+// Si David escribe un número GDC-NC-2026-NNN mayor que el contador, adelanta el contador para que el siguiente sugerido no choque con él.
+async function bumpCounterIfHigher(num){
+  const m=/^GDC-NC-2026-(\d+)$/.exec(num||"");
+  if(!m) return null; // número propio sin formato GDC-NC-2026-NNN: no toca el contador y seq queda null (nunca undefined — Firestore rechaza undefined)
+  const seq=parseInt(m[1],10);
+  const ref=doc(db,"counters","ncrSeq");
+  await runTransaction(db,async tx=>{ const snap=await tx.get(ref); const cur=snap.exists()?(snap.data().next||1):1; if(seq+1>cur) tx.set(ref,{next:seq+1},{merge:true}); });
+  return seq;
+}
+// Lee el siguiente correlativo SOLO para sugerirlo en el campo (no consume el número hasta guardar).
+async function fetchSuggestion(){
+  if(state.id||state.ncrNumber) return;
+  try{
+    const snap=await getDoc(doc(db,"counters","ncrSeq"));
+    const next=snap.exists()?(snap.data().next||1):1;
+    suggestedNumber="GDC-NC-2026-"+String(next).padStart(3,"0");
+    if(!$("ncrNumberInput").value.trim()){ $("ncrNumberInput").value=suggestedNumber; state.ncrNumber=suggestedNumber; updatePill(); }
+  }catch(e){ /* sin conexión: el campo queda vacío y el número se asigna al guardar */ }
+}
+$("ncrNumberInput").addEventListener("input",()=>{ state.ncrNumber=$("ncrNumberInput").value.trim()||null; updatePill(); markDirty(); });
+async function saveNCR(){
+  attempted=true; const missing=validate(); updatePill();
+  if(missing.length){ $("saveMsg").textContent=lang==="es"?"No se puede guardar: faltan campos. Revise la lista.":"Cannot save: fields are missing. Check the list."; document.querySelector(".card").scrollIntoView(); return false; }
+  if(!uid){ $("saveMsg").textContent="Sin autenticación anónima todavía. Espere e intente de nuevo."; return false; }
+  $("btnSave").disabled=true; $("saveMsg").textContent=lang==="es"?"Guardando…":"Saving…";
+  const d=collect(); const isNew=!state.id; const prevEstado=state.estadoPrev;
+  try{
+    let ncrId=state.id;
+    const typedNum=(d.ncrNumber||"").trim();
+    if(isNew){
+      if(typedNum && typedNum!==suggestedNumber){
+        // David escribió su propio número: debe ser único
+        let unique=false;
+        try{ unique=await checkNumberUnique(typedNum,null); }
+        catch(err){
+          // Sin conexión: no se puede verificar → borrador local; la unicidad se verifica al sincronizar
+          state.provisional=true; ncrId="local-"+Date.now(); state.ncrNumber=typedNum;
+          const draft={...d,id:ncrId,ncrNumber:typedNum,seq:null,fecha:isoToDMY(d.fecha),fechaISO:d.fecha,photos:state.photos,provisional:true,updatedAt:new Date().toISOString()};
+          const q=JSON.parse(localStorage.getItem("ncr-pending-v1")||"[]"); q.push(draft); localStorage.setItem("ncr-pending-v1",JSON.stringify(q));
+          state.id=ncrId; $("saveMsg").textContent="Sin conexión: guardado como borrador local con el número escrito por David. Se verificará al sincronizar. No genere el documento hasta entonces.";
+          $("btnSave").disabled=false; updatePill(); updateSyncUI(); return false;
+        }
+        if(!unique){ $("saveMsg").textContent="Ese número ya existe en otra NCR. Escriba otro número."; $("err-ncrNumber").classList.add("show"); $("ncrNumberInput").classList.add("field-error"); $("btnSave").disabled=false; return false; }
+        $("err-ncrNumber").classList.remove("show"); $("ncrNumberInput").classList.remove("field-error");
+        state.ncrNumber=typedNum; state.seq=await bumpCounterIfHigher(typedNum); state.provisional=false;
+      } else {
+        // Número sugerido o vacío: asignar por transacción (consume el contador)
+        try{ const a=await assignNumber(); state.seq=a.seq; state.ncrNumber=a.number; state.provisional=false; $("ncrNumberInput").value=a.number; }
+        catch(err){
+          // Offline: local draft with provisional number, never shown as final in the document
+          state.provisional=true; ncrId="local-"+Date.now();
+          const draft={...d,id:ncrId,ncrNumber:typedNum||null,seq:null,fecha:isoToDMY(d.fecha),fechaISO:d.fecha,photos:state.photos,provisional:true,updatedAt:new Date().toISOString()};
+          const q=JSON.parse(localStorage.getItem("ncr-pending-v1")||"[]"); q.push(draft); localStorage.setItem("ncr-pending-v1",JSON.stringify(q));
+          state.id=ncrId; $("saveMsg").textContent="Sin conexión: guardado como borrador local. El número real se asignará al sincronizar. No genere el documento hasta entonces.";
+          $("btnSave").disabled=false; updatePill(); updateSyncUI(); return false;
+        }
+      }
+    } else if(typedNum && typedNum!==state.savedNumber){
+      // Renombrar una NCR existente: verificar unicidad
+      let unique=false;
+      try{ unique=await checkNumberUnique(typedNum,state.id); }
+      catch(err){ $("saveMsg").textContent="Sin conexión: no se pudo verificar el nuevo número. Intente de nuevo con conexión."; $("btnSave").disabled=false; return false; }
+      if(!unique){ $("saveMsg").textContent="Ese número ya existe en otra NCR. Escriba otro número."; $("err-ncrNumber").classList.add("show"); $("ncrNumberInput").classList.add("field-error"); $("btnSave").disabled=false; return false; }
+      $("err-ncrNumber").classList.remove("show"); $("ncrNumberInput").classList.remove("field-error");
+      pendingAudit.push("Número cambiado: "+(state.savedNumber||"—")+" → "+typedNum);
+      state.ncrNumber=typedNum; state.seq=await bumpCounterIfHigher(typedNum);
+    }
+    if(!ncrId) ncrId=doc(collection(db,"ncrs")).id;
+    const payload={ncrNumber:state.ncrNumber,seq:(state.seq ?? null),proyecto:d.proyecto,cliente:d.cliente,constructor:d.constructor,supervision:d.supervision,ubicacion:d.ubicacion,progresiva:d.progresiva,fecha:isoToDMY(d.fecha),fechaISO:d.fecha,planoRef:d.planoRef,items:d.items,descripcion:d.descripcion,impacto:d.impacto,estado:d.estado,signatures:d.signatures,createdByUid:uid,syncStatus:"synced",updatedAt:serverTimestamp()};
+    if(isNew) payload.createdAt=serverTimestamp();
+    await setDoc(doc(db,"ncrs",ncrId),payload,{merge:true});
+    // Photos as separate docs (not in the main doc — 1 MB limit)
+    const existing=await getDocs(collection(db,"ncrs",ncrId,"photos"));
+    const keep=new Set(state.photos.map(p=>p.id));
+    for(const ed of existing.docs){ if(!keep.has(ed.id)) await deleteDoc(ed.ref); }
+    for(let i=0;i<state.photos.length;i++){ const p=state.photos[i]; await setDoc(doc(db,"ncrs",ncrId,"photos",p.id),{dataUrl:p.dataUrl,caption:p.caption||("Foto "+(i+1)),order:i,createdAt:serverTimestamp()},{merge:true}); }
+    state.id=ncrId; state.savedNumber=state.ncrNumber; if(isNew) state.createdAt=new Date();
+    await addAudit(ncrId,isNew?"Creada NCR "+state.ncrNumber:"Guardada / editada NCR "+state.ncrNumber);
+    if(prevEstado!==d.estado) await addAudit(ncrId,"Estado: "+prevEstado+" → "+d.estado);
+    for(const a of pendingAudit) await addAudit(ncrId,a); pendingAudit=[];
+    state.estadoPrev=d.estado; state.dirty=false; $("draftWarning").style.display="none"; localStorage.removeItem("ncr-draft-v1");
+    $("saveMsg").textContent="Guardado en Firestore: "+state.ncrNumber+" (confirmado por el servidor).";
+    updatePill(); await loadList(); await loadAudit(ncrId); return true;
+  }catch(err){ $("saveMsg").textContent="Error al guardar en Firestore: "+err.message; return false; }
+  finally{ $("btnSave").disabled=false; }
+}
+$("btnSave").onclick=saveNCR;
+
+async function syncPending(){
+  if(!online||!uid) return;
+  let q=[]; try{ q=JSON.parse(localStorage.getItem("ncr-pending-v1")||"[]"); }catch(e){}
+  if(!q.length) return;
+  const remaining=[];
+  for(const draft of q){
+    try{
+      let a=null;
+      if(draft.ncrNumber){
+        // Borrador con número propio (escrito por David o sugerido): verificar unicidad al sincronizar
+        const unique=await checkNumberUnique(draft.ncrNumber,null);
+        if(unique) a={number:draft.ncrNumber,seq:await bumpCounterIfHigher(draft.ncrNumber)};
+      }
+      if(!a) a=await assignNumber();
+      const ncrId=doc(collection(db,"ncrs")).id;
+      const payload={...draft,ncrNumber:a.number,seq:a.seq,syncStatus:"synced",createdAt:serverTimestamp(),updatedAt:serverTimestamp(),createdByUid:uid};
+      delete payload.id; delete payload.photos; delete payload.provisional; delete payload.fechaDMY;
+      await setDoc(doc(db,"ncrs",ncrId),payload);
+      for(let i=0;i<(draft.photos||[]).length;i++){ const p=draft.photos[i]; await setDoc(doc(db,"ncrs",ncrId,"photos",p.id),{dataUrl:p.dataUrl,caption:p.caption||("Foto "+(i+1)),order:i,createdAt:serverTimestamp()}); }
+      await addAudit(ncrId,"Creada NCR "+a.number+" (sincronizada desde borrador local)");
+      if(state.id===draft.id){ state.id=ncrId; state.ncrNumber=a.number; state.seq=a.seq; state.provisional=false; updatePill(); }
+    }catch(e){ remaining.push(draft); }
+  }
+  localStorage.setItem("ncr-pending-v1",JSON.stringify(remaining)); pendingCount=remaining.length; updateSyncUI(); await loadList();
+}
+
+let allNcrs=[];
+async function loadList(){
+  if(!uid) return;
+  try{
+    const snap=await getDocs(collection(db,"ncrs"));
+    allNcrs=snap.docs.map(x=>({id:x.id,...x.data()}));
+    // Sort in JavaScript (no where()+orderBy() on a different field — no composite index)
+    allNcrs.sort((a,b)=>{ const ta=a.createdAt&&a.createdAt.seconds?a.createdAt.seconds:0; const tb=b.createdAt&&b.createdAt.seconds?b.createdAt.seconds:0; return tb-ta; });
+    renderList();
+  }catch(e){ $("listItems").innerHTML="<p style='color:#b00020'>Error al cargar la lista: "+esc(e.message)+"</p>"; }
+}
+function renderList(){
+  const q=($("searchInput").value||"").toLowerCase(), fe=$("filterEstado").value, fi=$("filterImpacto").value;
+  const rows=allNcrs.filter(n=>{
+    const hay=(n.ncrNumber+" "+n.ubicacion+" "+(n.items||[]).map(i=>i.elemento).join(" ")).toLowerCase();
+    return (!q||hay.includes(q)) && (!fe||n.estado===fe) && (!fi||n.impacto===fi);
+  });
+  $("listCount").textContent=rows.length+" NCR";
+  $("listEmpty").style.display=rows.length?"none":"block";
+  const c=$("listItems"); c.innerHTML="";
+  rows.forEach(n=>{
+    const div=document.createElement("div"); div.className="list-item";
+    div.innerHTML="<strong>"+esc(n.ncrNumber||"—")+"</strong> <span class='badge'>"+esc(n.estado||"")+"</span><span class='badge "+(n.impacto==="GRAVE"?"grave":n.impacto==="MODERADO"?"moderado":"leve")+"'>"+esc(n.impacto||"")+"</span><br><span class='muted'>"+esc(n.fecha||"")+" · "+esc(n.ubicacion||"")+" · "+esc((n.items&&n.items[0]?n.items[0].elemento:""))+"</span>";
+    div.onclick=()=>openNCR(n.id); c.appendChild(div);
+  });
+}
+$("searchInput").addEventListener("input",renderList); $("filterEstado").addEventListener("change",renderList); $("filterImpacto").addEventListener("change",renderList);
+$("btnRefresh").onclick=loadList;
+
+async function openNCR(id){
+  try{
+    const snap=await getDoc(doc(db,"ncrs",id)); if(!snap.exists()){ alert("NCR no encontrada."); return; }
+    const d=snap.data();
+    const ph=await getDocs(collection(db,"ncrs",id,"photos"));
+    state.photos=ph.docs.map(x=>({id:x.id,...x.data()})).sort((a,b)=>a.order-b.order);
+    state.id=id; state.ncrNumber=d.ncrNumber||null; state.seq=d.seq||null; state.createdAt=d.createdAt||null; state.provisional=false; suggestedNumber=null; pendingAudit=[];
+    fill({...d,fechaISO:d.fechaISO||dmyToISO(d.fecha)});
+    showForm(); await loadAudit(id);
+  }catch(e){ alert("Error al abrir la NCR: "+e.message); }
+}
+async function loadAudit(id){
+  try{ const s=await getDocs(collection(db,"ncrs",id,"audit")); const rows=s.docs.map(x=>x.data()).sort((a,b)=>(b.createdAt&&b.createdAt.seconds||0)-(a.createdAt&&a.createdAt.seconds||0));
+    $("auditBox").style.display="block"; $("auditList").innerHTML=rows.length?rows.map(r=>"<div>• "+esc(r.action||"")+" — "+fmtTs(r.createdAt)+" — "+esc(r.uid||"")+"</div>").join(""):"Sin entradas de auditoría todavía.";
+  }catch(e){ $("auditBox").style.display="none"; }
+}
+
+function showList(){ $("listView").style.display="block"; $("formView").style.display="none"; $("docView").style.display="none"; }
+function showForm(){ $("listView").style.display="none"; $("formView").style.display="block"; $("docView").style.display="none"; }
+$("btnList").onclick=()=>{showList();loadList();};
+// Nueva NCR sin diálogos que bloquean: si hay un borrador con contenido, se guarda como respaldo en este dispositivo antes de empezar de cero, y el formulario completo aparece con un solo clic.
+function newForm(){
+  if(state.dirty && ($("descripcion").value.trim()||$("ubicacion").value.trim()||state.photos.length)){
+    try{ const d=collect(); d.id=state.id; d.ncrNumber=state.ncrNumber; d.seq=state.seq; d.photos=state.photos; localStorage.setItem("ncr-draft-prev-v1",JSON.stringify(d)); }catch(e){}
+  }
+  state={id:null,ncrNumber:null,seq:null,savedNumber:null,createdAt:null,items:[{etapa:"",responsable:"",ubicacion:"",elemento:"",partida:""}],photos:[],signatures:SIG_ROLES.map(r=>({rol:r.rol,nombre:"",cargo:r.cargo,signed:false,signedAt:null,dataUrl:""})),impacto:"",estadoPrev:"Abierta",dirty:false,provisional:false}; pendingAudit=[]; suggestedNumber=null; $("ncrNumberInput").value=""; fill({proyecto:"MEJORAMIENTO Y AMPLIACIÓN DEL SERVICIO DE TRANSITABILIDAD ENTRE EL TRAMO AY-728 (PENAL DE YANAMILLA) HASTA EL TRAMO AY-729 (PTAR) LONGITUD 2.38 KM, EN EL DISTRITO DE ANDRES AVELINO CACERES - PROVINCIA DE HUAMANGA - DEPARTAMENTO DE AYACUCHO",cliente:"GOBIERNO REGIONAL DE AYACUCHO",constructor:"GOBIERNO REGIONAL DE AYACUCHO - SEDE CENTRAL",estado:"Abierta"}); $("auditBox").style.display="none"; localStorage.removeItem("ncr-draft-v1"); $("draftWarning").style.display="none"; updatePill(); showForm(); fetchSuggestion();
+}
+$("btnNew").onclick=newForm;
+$("btnClear").onclick=()=>{ newForm(); };
+$("btnExample").onclick=()=>{
+  fill({proyecto:"MEJORAMIENTO Y AMPLIACIÓN DE LOS SERVICIO DE AGUA POTABLE E INSTALACIONES DEL SISTEMA DE ALCANTARILLADO EN EL CENTRO POBLADO DE LIRCAYCCASA DEL DISTRITO DE CONGALLA, PROVINCIA DE ANGARAES, HUANCAVELICA",cliente:"MUNICIPALIDAD DISTRITAL DE CONGALLA",constructor:"CONSORCIO ECOPSA",supervision:"CONSORCIO SUPERVISOR SANEAMIENTO LIRCAYCCASA",ubicacion:"Centro poblado de Lircayccasa, Congalla",progresiva:"",fechaISO:"2026-09-14",planoRef:"",estado:"Abierta",items:[{etapa:"ESTRUCTURA",responsable:"Residente de obra",ubicacion:"Centro poblado de Lircayccasa",elemento:"COLUMNA",partida:"CONCRETO ARMADO FC= 175Kg/cm2 EN COLUMNAS Y VIGAS"}],descripcion:"Cangrejeras en las columnas en el proceso de vaciado, falta de suficiente vibrado, luego del vaciado se detectaron las cangrejeras.\nTener cuidado en el desencofrado esperar que haya fraguado 10 horas mínimos.\nEl curado del concreto se realizará inmediatamente después del desencofrado de las estructuras (columnas y vigas).",impacto:"LEVE"});
+  state.photos=[]; renderPhotos(); state.id=null; state.ncrNumber=$("ncrNumberInput").value.trim()||null; state.savedNumber=null; state.seq=null; state.provisional=false; updatePill();
+  $("saveMsg").textContent=lang==="es"?"Ejemplo cargado localmente. No se ha guardado en Firestore: agregue al menos 1 foto y guarde.":"Example loaded locally. Not saved to Firestore: add at least 1 photo and save.";
+  showForm();
+};
+
+// Fecha y hora de registro del documento (formato del documento de Muse: 13/11/2026 23:00:06). Si la NCR está guardada, usa su fecha de creación; si es borrador, la hora actual.
+function fmtRegistro(){
+  let dt=null; const c=state.createdAt;
+  if(c){ if(typeof c.toDate==="function") dt=c.toDate(); else if(c.seconds) dt=new Date(c.seconds*1000); else if(typeof c==="string") dt=new Date(c); else if(c instanceof Date) dt=c; }
+  if(!dt||isNaN(dt.getTime())) dt=new Date();
+  const p=n=>String(n).padStart(2,"0");
+  return p(dt.getDate())+"/"+p(dt.getMonth()+1)+"/"+dt.getFullYear()+" "+p(dt.getHours())+":"+p(dt.getMinutes())+":"+p(dt.getSeconds());
+}
+function buildDoc(){
+  const d=collect();
+  // Sin fricción (lógica del MVP): el número es el del campo si lo hay; si no, BORRADOR. El documento se genera libremente, guardado o no.
+  const numLabel=($("ncrNumberInput").value.trim()) || "BORRADOR (sin número)";
+  const isDraft=!state.id;
+  const draftNote=isDraft?'<p style="background:#fff3cd;border:1px solid #d9a400;padding:8px"><strong>BORRADOR — vista previa, no guardado.</strong> Guarde la NCR para registrarla con su número definitivo.</p>':"";
+  const itemsRows=d.items.map((it,i)=>"<tr><td>"+(i+1)+"</td><td>"+esc(it.etapa)+"</td><td>"+esc(it.responsable)+"</td><td>"+esc(it.ubicacion)+"</td><td>"+esc(it.elemento)+"</td><td>"+esc(it.partida)+"</td></tr>").join("");
+  const photosHtml=state.photos.map((p,i)=>'<figure><img src="'+p.dataUrl+'" alt="Foto '+(i+1)+'"><figcaption>FOTO '+(i+1)+' — '+esc(p.caption||"")+'</figcaption></figure>').join("")||"Sin foto de evidencia";
+  const chk=v=>state.impacto===v?"☑":"☐";
+  return '<table style="border:none"><tr><td style="width:90px;border:none;vertical-align:middle"><img src="'+LOGO_AYACUCHO+'" alt="Gobierno Regional Ayacucho" style="height:72px;width:auto"></td><td style="text-align:center;border:none;vertical-align:middle"><strong>Gobierno Regional de Ayacucho</strong><br>Gestión de Calidad<br><div class="muted">FORMATO</div><h1>NO CONFORMIDADES</h1></td><td style="width:90px;border:none"></td></tr></table>'
+  +'<table><tr><td>CÓDIGO GDC-NC-2026</td><td>VERSIÓN 0</td><td>PÁGINA 1</td><td>FECHA DE VIGENCIA 09-03-2020</td></tr>'
+  +'<tr><td colspan="4">N.º NCR: <strong>'+esc(numLabel)+'</strong></td></tr></table>'
+  +draftNote
+  +'<h2>1. DATOS GENERALES</h2><table><tr><td>PROYECTO</td><td>'+esc(d.proyecto)+'</td></tr><tr><td>CLIENTE</td><td>'+esc(d.cliente)+'</td></tr><tr><td>CONSTRUCTOR</td><td>'+esc(d.constructor)+'</td></tr><tr><td>SUPERVISIÓN</td><td>'+esc(d.supervision)+'</td></tr></table>'
+  +'<h2>2. IDENTIFICACIÓN</h2><table><tr><td>UBICACIÓN</td><td>'+esc(d.ubicacion)+'</td></tr><tr><td>PROGRESIVA</td><td>'+esc(d.progresiva)+'</td></tr><tr><td>FECHA</td><td>'+esc(isoToDMY(d.fecha))+'</td></tr><tr><td>PLANO DE REF.</td><td>'+esc(d.planoRef)+'</td></tr></table>'
+  +'<h3>TABLA DE ÍTEMS</h3><table><tr><th>Item</th><th>Etapa de obra</th><th>Responsable de no conformidad</th><th>Ubicación (nivel/piso/dpto/sector)</th><th>Elemento</th><th>Partida de trabajo</th></tr>'+itemsRows+'</table>'
+  +'<h2>3. DESCRIPCIÓN DE LA NCR</h2><p>'+esc(d.descripcion).replace(/\n/g,"<br>")+'</p><h3>FOTOS DE EVIDENCIA</h3><div class="photos-print">'+photosHtml+'</div><p>Impacto: '+chk("LEVE")+' Leve &nbsp; '+chk("MODERADO")+' Moderado &nbsp; '+chk("GRAVE")+' Grave</p>'
+  // Firmas como en el documento de Muse: solo dos títulos arriba (Residente de Obra y Especialista de Calidad); el resto de casillas queda en blanco para firmar a mano la copia impresa.
+  +'<h2>FIRMAS</h2><table><tr><td style="height:150px;vertical-align:top"><strong>RESIDENTE DE OBRA</strong></td><td style="height:150px;vertical-align:top"><strong>SUPERVISOR DE OBRA</strong></td></tr><tr><td style="height:150px"></td><td style="height:150px"></td></tr><tr><td style="height:150px"></td><td style="height:150px"></td></tr></table>'
+  +'<h2>REGISTRO DEL DOCUMENTO</h2><table><tr><td style="width:40%">Fecha y hora de registro</td><td>'+fmtRegistro()+'</td></tr></table><p class="muted">Registro generado automáticamente: la fecha y hora de registro corresponden al momento en que se generó este documento.</p>';
+}
+$("btnGenerate").onclick=async ()=>{
+  updatePill();
+  // Como en el MVP: el documento se genera siempre, aunque falten datos (lo que falta se muestra solo como información).
+  // Sin fricción (lógica del MVP): el documento se genera libremente, sin guardar primero. Si no hay número, se marca BORRADOR.
+  $("docPreview").innerHTML=buildDoc();
+  $("listView").style.display="none"; $("formView").style.display="none"; $("docView").style.display="block";
+  // Estimate pages for the preview label (A4 ≈ 1122 px at 96 dpi, minus margins)
+  requestAnimationFrame(()=>{ const draftTxt=!state.id?" — BORRADOR (no guardado todavía; guarde la NCR para registrarla con su número definitivo).":""; $("docNote").textContent="Para imprimir o guardar como PDF: usa Ctrl+P (o el botón Imprimir de tu navegador) y elige “Guardar como PDF”. Sale solo el documento, sin el formulario."+draftTxt; });
+  window.scrollTo(0,0);
+};
+$("btnPrint").onclick=()=>window.print();
+// Descargar el documento como archivo (HTML autocontenido: mismo formato A4, con logo y fotos incrustados — se abre en cualquier navegador y se imprime/archiva/comparte sin conexión)
+$("btnDownload").onclick=()=>{
+  const num=($("ncrNumberInput").value.trim()||"BORRADOR").replace(/[^\w\-]+/g,"-");
+  const css=document.querySelector("style").textContent;
+  const html='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>NCR '+esc(num)+'</title><style>'+css+'</style></head><body><div class="wrap"><div class="doc">'+$("docPreview").innerHTML+'</div></div></body></html>';
+  const blob=new Blob([html],{type:"text/html;charset=utf-8"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="NCR-"+num+".html";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+};
+$("btnBackForm").onclick=showForm;
+
+function updateSyncUI(){
+  const el=$("syncStatus");
+  if(!online){ el.textContent="● Sin conexión"; el.className="sync"; $("statusPill").classList.add("off"); }
+  else if(pendingCount>0){ el.textContent="● Pendiente de sincronizar ("+pendingCount+")"; }
+  else { el.textContent="● En línea"; }
+}
+window.addEventListener("online",async ()=>{online=true;updateSyncUI();await syncPending();});
+window.addEventListener("offline",()=>{online=false;updateSyncUI();});
+
+updateFechaFormatted(); renderItems(); renderPhotos(); renderSignatures(); applyLang(); updatePill(); updateSyncUI();
+$("logoTop").src=LOGO_AYACUCHO;
+// Restore local draft (never loses a form in progress on refresh)
+try{ const raw=localStorage.getItem("ncr-draft-v1"); if(raw){ const dr=JSON.parse(raw); if(dr && (dr.descripcion||dr.ubicacion)){ fill({...dr,fechaISO:dr.fecha}); if(dr.id && !String(dr.id).startsWith("local-")){ state.id=dr.id; state.seq=dr.seq||null; } state.photos=dr.photos||[]; renderPhotos(); state.dirty=true; $("draftWarning").style.display="block"; } } }catch(e){}
+try{ pendingCount=JSON.parse(localStorage.getItem("ncr-pending-v1")||"[]").length; }catch(e){}
+updateSyncUI();
+// Al abrir el enlace, el FORMULARIO completo es la primera vista (no la lista): David ve todos los campos de inmediato. Si hay borrador, se muestra; si no, un formulario nuevo con el número sugerido.
+if(state.dirty){ showForm(); } else { newForm(); }
+
+// ---- PIN de acceso (solo usuarios autorizados: David + 1) ----
+const PIN_KEY="ncr-pin-ok";
+const DEFAULT_PIN="2026"; // PIN inicial; se cambia con "Cambiar PIN" (queda guardado en Firestore settings/access)
+let pinUnlocked=localStorage.getItem(PIN_KEY)==="1";
+let authReadyResolve; const authReady=new Promise(r=>{authReadyResolve=r;});
+function hidePinGate(){ $("pinGate").style.display="none"; }
+if(pinUnlocked) hidePinGate(); // la pantalla del PIN es visible por defecto (nunca se ve la app antes de desbloquear)
+async function verifyPin(pin){
+  await authReady;
+  let stored=DEFAULT_PIN;
+  try{
+    const snap=await getDoc(doc(db,"settings","access"));
+    if(snap.exists() && snap.data().pin) stored=String(snap.data().pin);
+    else { try{ await setDoc(doc(db,"settings","access"),{pin:DEFAULT_PIN},{merge:true}); }catch(e){} }
+  }catch(e){ /* sin permiso o sin conexión: se usa el PIN inicial */ }
+  return String(pin)===String(stored);
+}
+$("btnPin").onclick=async ()=>{
+  const pin=$("pinInput").value.trim();
+  if(!pin) return;
+  $("btnPin").disabled=true; $("pinErr").classList.remove("show");
+  try{
+    if(await verifyPin(pin)){ pinUnlocked=true; localStorage.setItem(PIN_KEY,"1"); hidePinGate(); }
+    else { $("pinErr").classList.add("show"); $("pinInput").value=""; $("pinInput").focus(); }
+  }catch(e){ $("pinErr").textContent="No se pudo verificar el PIN: "+e.message; $("pinErr").classList.add("show"); }
+  $("btnPin").disabled=false;
+};
+$("pinInput").addEventListener("keydown",e=>{ if(e.key==="Enter") $("btnPin").click(); });
+$("btnChangePin").onclick=async ()=>{
+  const cur=prompt(lang==="es"?"PIN actual:":"Current PIN:");
+  if(cur===null) return;
+  if(!(await verifyPin(cur.trim()))){ alert(lang==="es"?"PIN actual incorrecto.":"Current PIN is wrong."); return; }
+  const next=prompt(lang==="es"?"Nuevo PIN (4 a 8 dígitos):":"New PIN (4 to 8 digits):");
+  if(next===null) return;
+  const np=next.trim();
+  if(!/^\d{4,8}$/.test(np)){ alert(lang==="es"?"El PIN debe tener de 4 a 8 dígitos.":"The PIN must be 4 to 8 digits."); return; }
+  try{ await setDoc(doc(db,"settings","access"),{pin:np},{merge:true}); alert(lang==="es"?"PIN cambiado.":"PIN changed."); }
+  catch(e){ alert("No se pudo guardar el PIN: "+e.message+" — revise las reglas de Firestore (settings/access)."); }
+};
+
+signInAnonymously(auth).catch(e=>{ $("authStatus").textContent="Auth: "+e.message; $("saveMsg").textContent="Error de autenticación anónima: "+e.message+" — no se puede guardar hasta autenticarse."; });
+onAuthStateChanged(auth,async user=>{ if(authReadyResolve){authReadyResolve();authReadyResolve=null;} if(user){ uid=user.uid; $("authStatus").textContent="uid: "+uid.slice(0,8)+"… (anónimo)"; await loadList(); await syncPending(); if(!state.id && !$("ncrNumberInput").value.trim()) fetchSuggestion(); } });
+</script>
+</body>
+</html>
