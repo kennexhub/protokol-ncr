@@ -195,4 +195,4 @@ Kenny (kennexhub) accepted the repo invite, opened PR #1 "Quitar PIN y campo cor
 - Offline status now visible in the top bar ("Sin conexión — se guardará como borrador"); the status pill no longer stays stuck "off" after reconnecting.
 - Not touched: design, colours, texts, form/document structure, the real example, the database, deploy.py, this README.
 
-**Status:** approved by Snehil (via Kizie), merged 2026-11-15 07:19:53 UTC as commit 9dc5fcc. Local workspace pulled (fast-forward). The LIVE app still serves the pre-PR version (with the PIN) until a redeploy — deploys come from the local file via deploy.py, not from GitHub.
+**Status:** approved by Snehil (via Kizie), merged 2026-11-15 07:19:53 UTC as commit 9dc5fcc. Local workspace pulled (fast-forward). **Redeployed 2026-11-15 ~13:03 IST** at Snehil's word — live file byte-identical to the merged code (72,062 bytes), 0 PIN references, 0 number-field references. The LIVE app now opens freely with no PIN. (Verification of the redeploy: live browser check — result recorded in chat.)
