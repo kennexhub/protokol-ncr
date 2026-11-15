@@ -181,3 +181,18 @@ Snehil: the earlier corrections were Kenny's messages — make the app as per th
 **KEPT (product features the MVP lacks, because they are the app's purpose — Snehil to confirm if any should go):** PIN gate + Cambiar PIN (1–2 authorized users); list view with search/filters; Firebase save; N.º NCR number field with sequential suggestion (David assigns); ESTADO field + status workflow + audit; "Descargar documento" button (Snehil's round-5 ask); photosHelp compression note; offline drafts/autosave.
 - Verification: live browser check of the fresh form + generate-with-missing-data — result recorded in chat, not here.
 - Storage test (2026-11-15 ~00:31 IST): a complete test NCR (GDC-NC-2026-001, all fields, 1 photo with caption, 1 drawn + signed signature, estado En corrección) saved live ("Guardado en Firestore: GDC-NC-2026-001 (confirmado por el servidor)") and read back from Firestore via REST: every field present, 1 photo doc (caption + 16 KB dataUrl), all 6 signature records (Residente signed with name + timestamp + 5.7 KB drawn image; Supervisor + 4 additional unsigned), 4 audit entries (Creada, Estado Abierta → En corrección, Foto agregada, Firma). Test record + subcollections deleted; counter back to 1; 0 NCRs; PIN 2026.
+
+## Round 9 (2026-11-15 ~12:49 IST) — Kenny's PR #1 merged (no PIN, no editable number, A4 fixes)
+
+Kenny (kennexhub) accepted the repo invite, opened PR #1 "Quitar PIN y campo correlativo; A4 y avisos sin conexión" (branch fix/quitar-pin-y-correlativo, +23/−82, only index.html). Snehil said approve + merge. Kizie reviewed the full diff before merging: no dangling references to any removed element, JS syntax OK.
+
+**What the PR does:**
+- PIN gate REMOVED completely (pinGate, "Cambiar PIN", DEFAULT_PIN, verifyPin, settings/access). The app opens freely — no PIN anymore. (The PIN was always a field-test lock, not real security; and the MVP itself has no PIN.)
+- The editable "N.º NCR (CORRELATIVO)" field is REMOVED from the form. The number is still assigned automatically on save (counter transaction) and shown read-only in the document and status bar. David can no longer type his own number.
+- Search placeholder: "Pucará" removed.
+- A4: document signature cells now 27mm per row (were 150px); break-inside: avoid rules so no block splits across pages.
+- Signatures: no more alert asking for the name before signing; the warning now shows inline in red next to the name field. Digital signing stays optional.
+- Offline status now visible in the top bar ("Sin conexión — se guardará como borrador"); the status pill no longer stays stuck "off" after reconnecting.
+- Not touched: design, colours, texts, form/document structure, the real example, the database, deploy.py, this README.
+
+**Status:** approved by Snehil (via Kizie), merged 2026-11-15 07:19:53 UTC as commit 9dc5fcc. Local workspace pulled (fast-forward). The LIVE app still serves the pre-PR version (with the PIN) until a redeploy — deploys come from the local file via deploy.py, not from GitHub.
