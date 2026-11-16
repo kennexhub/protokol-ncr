@@ -76,6 +76,8 @@ h3{font-size:15px;margin:14px 0 4px}
   #docView{display:block!important}
   #listView,#formView{display:none!important}
   .doc{border:none;padding:0;margin:0}
+  .doc .photos-print img{max-height:200px}
+  .doc th,.doc td{padding:4px}
 }
 </style>
 </head>
@@ -137,7 +139,7 @@ h3{font-size:15px;margin:14px 0 4px}
   <div>Gestión de Calidad</div>
   <div class="muted" data-i18n="formLabel">FORMATO</div>
   <h1 data-i18n="formTitle">NO CONFORMIDADES</h1>
-  <div class="code">CÓDIGO — GDC-NC-2026 &nbsp;|&nbsp; VERSIÓN — 0 &nbsp;|&nbsp; PÁGINA — 1 de 1 &nbsp;|&nbsp; FECHA DE VIGENCIA — 09-03-2020</div>
+  <div class="code">CÓDIGO — GDC-NC-2026 &nbsp;|&nbsp; VERSIÓN — 0 &nbsp;|&nbsp; PÁGINA — 1 de 1 &nbsp;|&nbsp; FECHA DE VIGENCIA — 31/12/2026</div>
   <div class="code" id="docNumberLine"></div>
 </div>
 
@@ -581,23 +583,20 @@ function fmtRegistro(){
 }
 function buildDoc(){
   const d=collect();
-  // Sin fricción (lógica del MVP): el número es el del campo si lo hay; si no, BORRADOR. El documento se genera libremente, guardado o no.
-  const numLabel=(state.ncrNumber||"").trim() || "BORRADOR (sin número)";
-  const isDraft=!state.id;
-  const draftNote=isDraft?'<p style="background:#fff3cd;border:1px solid #d9a400;padding:8px"><strong>BORRADOR — vista previa, no guardado.</strong> Guarde la NCR para registrarla con su número definitivo.</p>':"";
+  // Sin fricción (lógica del MVP): el número es el del campo si lo hay; si no, la fila no se muestra. El documento se genera libremente, guardado o no.
+  const numLabel=(state.ncrNumber||"").trim();
   const itemsRows=d.items.map((it,i)=>"<tr><td>"+(i+1)+"</td><td>"+esc(it.etapa)+"</td><td>"+esc(it.responsable)+"</td><td>"+esc(it.ubicacion)+"</td><td>"+esc(it.elemento)+"</td><td>"+esc(it.partida)+"</td></tr>").join("");
   const photosHtml=state.photos.map((p,i)=>'<figure><img src="'+p.dataUrl+'" alt="Foto '+(i+1)+'"><figcaption>FOTO '+(i+1)+' — '+esc(p.caption||"")+'</figcaption></figure>').join("")||"Sin foto de evidencia";
   const chk=v=>state.impacto===v?"☑":"☐";
   return '<table style="border:none"><tr><td style="width:90px;border:none;vertical-align:middle"><img src="'+LOGO_AYACUCHO+'" alt="Gobierno Regional Ayacucho" style="height:72px;width:auto"></td><td style="text-align:center;border:none;vertical-align:middle"><strong>Gobierno Regional de Ayacucho</strong><br>Gestión de Calidad<br><div class="muted">FORMATO</div><h1>NO CONFORMIDADES</h1></td><td style="width:90px;border:none"></td></tr></table>'
-  +'<table><tr><td>CÓDIGO GDC-NC-2026</td><td>VERSIÓN 0</td><td>PÁGINA 1</td><td>FECHA DE VIGENCIA 09-03-2020</td></tr>'
-  +'<tr><td colspan="4">N.º NCR: <strong>'+esc(numLabel)+'</strong></td></tr></table>'
-  +draftNote
-  +'<h2>1. DATOS GENERALES</h2><table><tr><td>PROYECTO</td><td>'+esc(d.proyecto)+'</td></tr><tr><td>CLIENTE</td><td>'+esc(d.cliente)+'</td></tr><tr><td>CONSTRUCTOR</td><td>'+esc(d.constructor)+'</td></tr><tr><td>SUPERVISIÓN</td><td>'+esc(d.supervision)+'</td></tr></table>'
+  +'<table><tr><td>CÓDIGO GDC-NC-2026</td><td>VERSIÓN 0</td><td>PÁGINA 1</td><td>FECHA DE VIGENCIA 31/12/2026</td></tr>'
+  +(numLabel?'<tr><td colspan="4">N.º NCR: <strong>'+esc(numLabel)+'</strong></td></tr>':"")+'</table>'
+  +'<h2>1. DATOS GENERALES</h2><table><tr><td>PROYECTO</td><td>'+esc(d.proyecto)+'</td></tr><tr><td>CLIENTE</td><td>'+esc(d.cliente)+'</td></tr><tr><td>CONSTRUCTOR</td><td>'+esc(d.constructor)+'</td></tr>'+(d.supervision?'<tr><td>SUPERVISIÓN</td><td>'+esc(d.supervision)+'</td></tr>':'')+'</table>'
   +'<h2>2. IDENTIFICACIÓN</h2><table><tr><td>UBICACIÓN</td><td>'+esc(d.ubicacion)+'</td></tr><tr><td>PROGRESIVA</td><td>'+esc(d.progresiva)+'</td></tr><tr><td>FECHA</td><td>'+esc(isoToDMY(d.fecha))+'</td></tr><tr><td>PLANO DE REF.</td><td>'+esc(d.planoRef)+'</td></tr></table>'
   +'<h3>TABLA DE ÍTEMS</h3><table><tr><th>Item</th><th>Etapa de obra</th><th>Responsable de no conformidad</th><th>Ubicación (nivel/piso/dpto/sector)</th><th>Elemento</th><th>Partida de trabajo</th></tr>'+itemsRows+'</table>'
-  +'<h2>3. DESCRIPCIÓN DE LA NCR</h2><p>'+esc(d.descripcion).replace(/\n/g,"<br>")+'</p><h3>FOTOS DE EVIDENCIA</h3><div class="photos-print">'+photosHtml+'</div><p>Impacto: '+chk("LEVE")+' Leve &nbsp; '+chk("MODERADO")+' Moderado &nbsp; '+chk("GRAVE")+' Grave</p>'
   // Firmas como en el documento de Muse: solo dos títulos arriba (Residente de Obra y Especialista de Calidad); el resto de casillas queda en blanco para firmar a mano la copia impresa.
   +'<h2>FIRMAS</h2><table><tr><td style="height:27mm;vertical-align:top"><strong>RESIDENTE DE OBRA</strong></td><td style="height:27mm;vertical-align:top"><strong>SUPERVISOR DE OBRA</strong></td></tr><tr><td style="height:27mm"></td><td style="height:27mm"></td></tr><tr><td style="height:27mm"></td><td style="height:27mm"></td></tr></table>'
+  +'<h2>3. DESCRIPCIÓN DE LA NCR</h2><p>'+esc(d.descripcion).replace(/\n/g,"<br>")+'</p><h3>FOTOS DE EVIDENCIA</h3><div class="photos-print">'+photosHtml+'</div><p>Impacto: '+chk("LEVE")+' Leve &nbsp; '+chk("MODERADO")+' Moderado &nbsp; '+chk("GRAVE")+' Grave</p>'
   +'<h2>REGISTRO DEL DOCUMENTO</h2><table><tr><td style="width:40%">Fecha y hora de registro</td><td>'+fmtRegistro()+'</td></tr></table><p class="muted">Registro generado automáticamente: la fecha y hora de registro corresponden al momento en que se generó este documento.</p>';
 }
 $("btnGenerate").onclick=async ()=>{
